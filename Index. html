@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyMate - Smart Student Study Planner</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #eef2ff, #f8f5ff);
+  min-height: 100vh;
+  color: #25213b;
+}
+
+header {
+  background: #6c4ed9;
+  color: white;
+  padding: 25px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+header span {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 35px auto;
+  padding: 0 20px;
+}
+
+.hero {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(80,60,130,0.1);
+}
+
+.hero h1 {
+  color: #5d43c7;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stat {
+  background: #f2efff;
+  padding: 18px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.stat h2 {
+  color: #5d43c7;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(80,60,130,0.08);
+}
+
+.card h2 {
+  margin-bottom: 18px;
+  color: #4f3bb3;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+button {
+  border: none;
+  padding: 13px 20px;
+  border-radius: 10px;
+  background: #6c4ed9;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #543bb7;
+}
+
+.task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: #f7f5ff;
+}
+
+.task-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.task.completed {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+.priority {
+  font-size: 12px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: #e5defc;
+  color: #5138b5;
+}
+
+.delete {
+  background: #e45b6a;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+.progress-box {
+  margin-top: 15px;
+}
+
+.progress {
+  height: 15px;
+  background: #e7e4ee;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #6c4ed9;
+  transition: 0.3s;
+}
+
+.tip {
+  background: #f1edff;
+  padding: 18px;
+  border-left: 5px solid #6c4ed9;
+  border-radius: 10px;
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #777;
+  font-size: 13px;
+}
+
+@media(max-width:700px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  header {
+    padding: 20px;
+  }
+
+  .hero, .card {
+    padding: 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">📚 StudyMate</div>
+  <span>Smart Student Study Planner</span>
+</header>
+
+<div class="container">
+
+  <section class="hero">
+    <h1>Plan Better. Study Smarter.</h1>
+    <p>
+      StudyMate helps students organize daily study tasks,
+      set priorities and track their academic progress in one place.
+    </p>
+
+    <div class="stats">
+      <div class="stat">
+        <h2 id="total">0</h2>
+        <p>Total Tasks</p>
+      </div>
+
+      <div class="stat">
+        <h2 id="completed">0</h2>
+        <p>Completed</p>
+      </div>
+
+      <div class="stat">
+        <h2 id="remaining">0</h2>
+        <p>Remaining</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>➕ Add Study Task</h2>
+
+    <div class="form">
+      <input id="taskInput" type="text"
+        placeholder="Enter your study task">
+
+      <select id="priority">
+        <option value="High">High Priority</option>
+        <option value="Medium" selected>Medium Priority</option>
+        <option value="Low">Low Priority</option>
+      </select>
+
+      <button onclick="addTask()">Add Task</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>📝 Today's Study Tasks</h2>
+    <div id="taskList"></div>
+
+    <div class="progress-box">
+      <p><b>Study Progress</b></p>
+      <br>
+      <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>💡 Study Tip</h2>
+    <div class="tip">
+      Break large topics into smaller study sessions.
+      Focus on one task at a time and take short breaks
+      to maintain concentration.
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  StudyMate © 2026 | Smart Student Study Planner
+</footer>
+
+<script>
+let tasks = [];
+
+function addTask() {
+  const input = document.getElementById("taskInput");
+  const priority = document.getElementById("priority");
+
+  const text = input.value.trim();
+
+  if (text === "") {
+    alert("Please enter a study task.");
+    return;
+  }
+
+  tasks.push({
+    text: text,
+    priority: priority.value,
+    completed: false
+  });
+
+  input.value = "";
+  renderTasks();
+}
+
+function toggleTask(index) {
+  tasks[index].completed = !tasks[index].completed;
+  renderTasks();
+}
+
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  renderTasks();
+}
+
+function renderTasks() {
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+
+  tasks.forEach((task, index) => {
+
+    const div = document.createElement("div");
+
+    div.className = "task" +
+      (task.completed ? " completed" : "");
+
+    div.innerHTML = `
+      <div class="task-left">
+        <input type="checkbox"
+          ${task.completed ? "checked" : ""}
+          onchange="toggleTask(${index})">
+
+        <span>${task.text}</span>
+
+        <span class="priority">
+          ${task.priority}
+        </span>
+      </div>
+
+      <button class="delete"
+        onclick="deleteTask(${index})">
+        Delete
+      </button>
+    `;
+
+    list.appendChild(div);
+  });
+
+  updateStats();
+}
+
+function updateStats() {
+  const total = tasks.length;
+
+  const completed = tasks.filter(
+    task => task.completed
+  ).length;
+
+  const remaining = total - completed;
+
+  document.getElementById("total").textContent = total;
+  document.getElementById("completed").textContent = completed;
+  document.getElementById("remaining").textContent = remaining;
+
+  const progress =
+    total === 0 ? 0 : (completed / total) * 100;
+
+  document.getElementById("progressBar").style.width =
+    progress + "%";
+}
+
+renderTasks();
+</script>
+
+</body>
+</html>
